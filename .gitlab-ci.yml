@@ -1,0 +1,55 @@
+default:
+  image: google/cloud-sdk:340.0.0
+  before_script:
+    - gcloud auth activate-service-account --key-file=$SA_KEY
+    - gcloud auth configure-docker --quiet
+
+variables:
+  DOCKER_HOST: tcp://docker:2375/
+  DOCKER_DRIVER: overlay2
+  # See https://github.com/docker-library/docker/pull/166
+  DOCKER_TLS_CERTDIR: ""
+
+
+stages:
+- build
+- deploy
+
+job_build:
+  stage: build
+  image: docker:latest
+  before_script:
+    - echo "First Job"
+    - apk add python3
+    - apk add curl
+    - apk add which
+    - apk add bash
+    - curl -sSL https://sdk.cloud.google.com | bash
+    - source '/root/google-cloud-sdk/path.bash.inc'
+    - PATH=$PATH:/root/google-cloud-sdk/bin/
+    - /root/google-cloud-sdk/bin/gcloud auth activate-service-account --key-file=$SA_KEY
+    - /root/google-cloud-sdk/bin/gcloud auth configure-docker --quiet europe-west1-docker.pkg.dev
+  services:
+    - name: docker:dind
+      entrypoint: ["env", "-u", "DOCKER_HOST"]
+      command: ["dockerd-entrypoint.sh"]
+
+  script:
+  - ls backend/
+  - cd webappui
+  - docker build -t europe-west1-docker.pkg.dev/${PROJECT_ID}/frontend-repository/img_app:latest .
+  - docker push europe-west1-docker.pkg.dev/${PROJECT_ID}/frontend-repository/img_app:latest
+  - cd ../backend
+  - ls
+  - docker build -t europe-west1-docker.pkg.dev/${PROJECT_ID}/backend-repository/backend_webapp:latest .
+  - docker push europe-west1-docker.pkg.dev/${PROJECT_ID}/backend-repository/backend_webapp:latest
+
+
+job_deploy:
+  stage: deploy
+  script:
+    - kubectl set image deployment/dsn-app dsn-app=europe-west1-docker.pkg.dev/${PROJECT_ID}/webapp-img/img_app:latest
+  when: manual
+
+
+

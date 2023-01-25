@@ -1,0 +1,80 @@
+.vertical-separator
+{
+    width: 100px;
+    height: 2px;
+    background-color: red;
+    margin-top: 20px;
+    margin-bottom: 20px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.labelization
+{
+    margin-top: 20px;
+    width:100%;
+    height: 100%;
+    float: left;
+}
+
+.button_cl{
+    float: left;
+    margin-bottom: 20px;
+}
+
+#canvas
+{
+    float: left;
+    clear: left;
+}
+
+#canvas_gallery
+{
+    margin-top: 10px;
+    float: left;
+    clear: left;
+}
+
+.buttons_gallery
+{
+    float: left;
+    clear:left;
+}
+
+.container_button
+{
+    float: left;
+}
+
+#file
+{
+    margin-top: 10px;
+}
+
+.info_dis{
+    float: right;
+    margin-left: 20px;
+}
+
+#send
+{
+    margin-bottom: 10px;
+}
+
+.dropdown_labels
+{
+    margin-top: 20px;
+    width: 100px;
+}
+
+.input_image {
+    border: 1px solid #ccc;
+    display: inline-block;
+    padding: 6px 12px;
+    cursor: pointer;
+}
+
+.space_p
+{
+    width: 3px;
+}
